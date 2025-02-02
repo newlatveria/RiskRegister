@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Risk Register</title>
+    <style>
+        /* Basic styling for the form */
+        form {
+            display: flex;
+            flex-direction: column;
+            width: 300px;
+            margin-bottom: 20px;
+        }
+        label {
+            margin-bottom: 5px;
+        }
+        input, textarea, select {
+            margin-bottom: 10px;
+            padding: 5px;
+        }
+        .error {
+            color: red;
+        }
+    </style>
+</head>
+
+<h2>Import Risks from a CSV</h2>
+<a href="/">Home</a>
+<form id="import-risks-form" enctype="multipart/form-data">
+    <input type="file" id="csv-file" name="file" accept=".csv" required>
+    <button type="submit">Import</button>
+</form>
+
+<script>
+// ... other functions
+    const importForm = document.getElementById("import-risks-form")
+    importForm.addEventListener('submit', (event)=>{
+        event.preventDefault();
+        const fileInput = document.getElementById('csv-file');
+        const file = fileInput.files[0];
+
+        const formData = new FormData();
+        formData.append('file', file);
+
+        fetch('/risks/import', {
+            method: 'POST',
+            body: formData,
+        })
+        .then(response => response.json())
+        .then(risks => {
+            console.log('Risks imported:', risks);
+            importForm.reset();
+            fetchAndDisplayRisks();
+        })
+        .catch(error => {
+            console.error('Error importing risks:', error);
+        });
+    })
+</script>

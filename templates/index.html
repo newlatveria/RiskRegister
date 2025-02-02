@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Risk Register</title>
+    <style>
+        /* Basic styling for the form */
+        form {
+            display: flex;
+            flex-direction: column;
+            width: 300px;
+            margin-bottom: 20px;
+        }
+        label {
+            margin-bottom: 5px;
+        }
+        input, textarea, select {
+            margin-bottom: 10px;
+            padding: 5px;
+        }
+        .error {
+            color: red;
+        }
+
+                /* Container for the form and the right-side content */
+                .form-container {
+            display: flex; /* Use Flexbox */
+            gap: 20px; /* Adjust spacing between form and right side */
+            align-items: flex-start; /* Align items to the top */
+        }
+
+        /* Styles for the right-side content */
+        .right-content {
+            flex: 1; /* Allow right side to take available space */
+            border: 1px solid #ccc; /* Add a border for visual separation */
+            padding: 10px;
+        }
+
+        .right-content h3 { /* Style for the headings on the right */
+            margin-top: 0; /* Remove top margin */
+        }
+        .right-content div {
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Risks</h1>
+    <a href="/settings">Settings</a>
+    <a href="/import">Import CSV</a>
+
+    <h2>Create Risk</h2>
+    <form id="create-risk-form">
+        <label for="item_name">Item Name:</label>
+        <textarea id="item_name" name="item_name" required></textarea>
+
+        <label for="risk_id">Risk ID:</label>
+        <input type="text" id="risk_id" name="risk_id" required><span class="error" id="risk_id_error"></span>
+
+        <label for="risk_description">Description:</label>
+        <textarea id="risk_description" name="risk_description" required></textarea>
+
+        <label for="likelihood">Likelihood:</label>
+        <select id="likelihood" name="likelihood">
+            <option value="1">1 - Rare</option>
+            <option value="2">2 - Unlikley</option>
+            <option value="3">3 - Possible</option>
+            <option value="4">4 - Likely</option>
+            <option value="5">5 - Almost Certain</option>
+        </select>
+        <label for="impact">Impact:</label>
+        <select id="impact" name="impact">
+            <option value="1">1 - Negligible</option>
+            <option value="2">2 - Minor</option>
+            <option value="3">3 - Moderate</option>
+            <option value="4">4 - Major</option>
+            <option value="5">5 - Critical</option>
+        </select>
+        <label for="mitigation_actions">Mitigation Actions:</label>
+        <textarea id="mitigation_actions" name="mitigation_actions"></textarea>
+
+        <label for="responsible_person">Responsible Person:</label>
+        <input type="text" id="responsible_person" name="responsible_person">
+
+        <label for="responsible_department">Responsible Department:</label>
+        <input type="text" id="responsible_department" name="responsible_department">
+
+        <label for="target_completion_date">Target Completion Date:</label>
+        <input type="date" id="target_completion_date" name="target_completion_date">
+
+        <label for="status">Status:</label>
+        <input type="text" id="status" name="status">
+
+        <label for="stakeholders">Stakeholders:</label>
+        <textarea id="stakeholders" name="stakeholders"></textarea>
+
+        <button type="submit">Create Risk</button>
+    </form>
+
+    <h2>Update Risk</h2>
+    <form id="update-risk-form" data-id="">
+        <input type="hidden" id="update_id" name="id">
+        <label for="update_risk_id">Risk ID:</label>
+        <input type="text" id="update_risk_id" name="risk_id" required><span class="error" id="update_risk_id_error"></span>
+
+        <label for="update_risk_description">Description:</label>
+        <textarea id="update_risk_description" name="risk_description" required></textarea>
+
+        <label for="update_likelihood">Likelihood:</label>
+        <select id="update_likelihood" name="likelihood">
+            <option value="1">1 - Rare</option>
+            <option value="2">2 - Unlikley</option>
+            <option value="3">3 - Possible</option>
+            <option value="4">4 - Likely</option>
+            <option value="5">5 - Almost Certain</option>
+        </select>
+        <label for="update_impact">Impact:</label>
+        <select id="update_impact" name="impact">
+            <option value="1">1 - Negligible</option>
+            <option value="2">2 - Minor</option>
+            <option value="3">3 - Moderate</option>
+            <option value="4">4 - Major</option>
+            <option value="5">5 - Critical</option>
+        </select>
+        <label for="update_mitigation_actions">Mitigation Actions:</label>
+        <textarea id="update_mitigation_actions" name="mitigation_actions"></textarea>
+
+        <label for="update_responsible_person">Responsible Person:</label>
+        <input type="text" id="update_responsible_person" name="responsible_person">
+
+        <label for="update_responsible_department">Responsible Department:</label>
+        <input type="text" id="update_responsible_department" name="responsible_department">
+
+        <label for="update_target_completion_date">Target Completion Date:</label>
+        <input type="date" id="update_target_completion_date" name="target_completion_date">
+
+        <label for="update_status">Status:</label>
+        <input type="text" id="update_status" name="status">
+
+        <label for="update_stakeholders">Stakeholders:</label>
+        <textarea id="update_stakeholders" name="stakeholders"></textarea>
+
+        <button type="submit">Update Risk</button>
+    </form>
+
+    <h2>Risks List</h2>
+    <ul id="risks-list"></ul>
+
+    <script>
+        // ... (fetchAndDisplayRisks and deleteRisk functions remain the same)
+        const updateRiskForm = document.getElementById("update-risk-form");
+
+        function handleUpdateClick(event){
+            const id = event.target.dataset.id;
+            fetch(`/risks/${id}`)
+            .then(res => res.json())
+            .then(risk => {
+                //populate update form
+                populateUpdateForm(risk);
+            })
+        }
+
+        function populateUpdateForm(risk){
+            updateRiskForm.querySelector("#update_risk_id").value = risk.risk_id;
+            updateRiskForm.querySelector("#update_risk_description").value = risk.risk_description;
+            updateRiskForm.querySelector("#update_likelihood").value = risk.likelihood;
+            updateRiskForm.querySelector("#update_impact").value = risk.impact;
+            updateRiskForm.querySelector("#update_mitigation_actions").value = risk.mitigation_actions;
+            updateRiskForm.querySelector("#update_responsible_person").value = risk.responsible_person;
+            updateRiskForm.querySelector("#update_responsible_department").value = risk.responsible_department;
+            updateRiskForm.querySelector("#update_target_completion_date").value = risk.target_completion_date;
+            updateRiskForm.querySelector("#update_status").value = risk.status;
+            updateRiskForm.querySelector("#update_stakeholders").value = risk.stakeholders;
+            updateRiskForm.dataset.id = risk.id;
+        }
+
+        updateRiskForm.addEventListener("submit", (event)=>{
+            event.preventDefault();
+            const id = updateRiskForm.dataset.id;
+            const formData = new FormData(updateRiskForm);
+            const data = {};
+            formData.forEach((value, key) => data[key] = value);
+
+            fetch(`/risks/${id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            })
+            .then(response => response.json())
+            .then(risk => {
+                console.log('Success:', risk);
+                updateRiskForm.reset(); // Clear the form
+                fetchAndDisplayRisks();// Refresh the list
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                if(error.message.includes("risk_id")){
+                    document.getElementById("update_risk_id_error").textContent = "Risk Id already exists"
+                }
+            });
+        })
+
+        // ... (Create Risk Form Submission and fetchAndDisplayRisks functions remain the same)
+
+        fetchAndDisplayRisks(); // Initial load
+    </script>
+</body>
+</html>
