@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Risk Register - Main View</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        h1, h2 {
+            color: #0056b3;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .file-actions {
+            display: flex;
+            justify-content: flex-start;
+            gap: 10px;
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+            margin-bottom: 20px;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .file-actions input[type="file"] {
+            padding: 5px;
+            border: 1px solid #ccc;
+            background-color: #eee;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        #addNewRiskButton {
+            background-color: #28a745;
+        }
+        #addNewRiskButton:hover {
+            background-color: #1e7e34;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            white-space: nowrap;
+            overflow-x: auto;
+        }
+        table thead th {
+            background-color: #007bff;
+            color: white;
+            padding: 12px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+        table tbody td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            vertical-align: top;
+        }
+        table tbody tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        table tbody tr:hover {
+            background-color: #e9e9e9;
+        }
+        .edit-btn {
+            background-color: #ffc107;
+            color: #333;
+            margin-right: 5px;
+            padding: 6px 10px;
+            font-size: 0.9em;
+            margin-top: 0;
+        }
+        .edit-btn:hover {
+            background-color: #e0a800;
+        }
+        /* Risk Rating Classes (kept for display) */
+        .risk-rating-low { background-color: #d4edda; color: #155724; }
+        .risk-rating-medium { background-color: #fff3cd; color: #856404; }
+        .risk-rating-high { background-color: #f8d7da; color: #721c24; }
+        .risk-rating-critical { background-color: #6c757d; color: white; }
+        .sticky-header {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        /* --- Sticky Columns CSS --- */
+        #riskTable th:first-child,
+        #riskTable td:first-child {
+            position: sticky;
+            left: 0;
+            background-color: #007bff;
+            z-index: 11;
+        }
+        #riskTable tbody tr:nth-child(even) td:first-child {
+            background-color: #f2f2f2;
+        }
+        #riskTable tbody tr:nth-child(odd) td:first-child {
+            background-color: #fff;
+        }
+
+        #riskTable th:last-child,
+        #riskTable td:last-child {
+            position: sticky;
+            right: 0;
+            background-color: #007bff;
+            z-index: 11;
+        }
+        #riskTable tbody tr:nth-child(even) td:last-child {
+            background-color: #f2f2f2;
+        }
+        #riskTable tbody tr:nth-child(odd) td:last-child {
+            background-color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Risk Register</h1>
+
+        <div class="file-actions">
+            <button id="addNewRiskButton">➕ Add New Risk</button>
+            <input type="file" id="csvFileInput" accept=".csv" title="Select a CSV file from your computer to load data. Existing data will be replaced.">
+            <button id="loadCsvButton" title="Load data from the selected CSV file.">Load from CSV</button>
+            <button id="saveCsvButton" title="Download the current risk register data as a CSV file.">Save to CSV</button>
+            </div>
+
+        <div style="overflow-x: auto;">
+            <table id="riskTable">
+                <thead>
+                    <tr>
+                        <th class="sticky-header">Risk Number</th>
+                        <th class="sticky-header">Date Raised</th>
+                        <th class="sticky-header">Raised By</th>
+                        <th class="sticky-header">Risk Item</th>
+                        <th class="sticky-header">Risk Issue</th>
+                        <th class="sticky-header">Impact Statement</th>
+                        <th class="sticky-header">Impacted Area</th>
+                        <th class="sticky-header">Risk Category</th>
+                        <th class="sticky-header">Related Laws/Regs</th>
+                        <th class="sticky-header">Non-Compliance Impact</th>
+                        <th class="sticky-header">Prob (Initial)</th>
+                        <th class="sticky-header">Impact (Initial)</th>
+                        <th class="sticky-header">Score (Initial)</th>
+                        <th class="sticky-header">Rating (Initial)</th>
+                        <th class="sticky-header">Outcome Definition</th>
+                        <th class="sticky-header">Risk Owner</th>
+                        <th class="sticky-header">Controls/Mitigations</th>
+                        <th class="sticky-header">Prob (Residual)</th>
+                        <th class="sticky-header">Impact (Residual)</th>
+                        <th class="sticky-header">Score (Residual)</th>
+                        <th class="sticky-header">Rating (Residual)</th>
+                        <th class="sticky-header">Actions</th>
+                        <th class="sticky-header">Risk Status</th>
+                        <th class="sticky-header">Review Date</th>
+                        <th class="sticky-header">Age (Days)</th>
+                        <th class="sticky-header">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        const riskTableBody = document.querySelector('#riskTable tbody');
+        const csvFileInput = document.getElementById('csvFileInput');
+        const loadCsvButton = document.getElementById('loadCsvButton');
+        const saveCsvButton = document.getElementById('saveCsvButton');
+        const addNewRiskButton = document.getElementById('addNewRiskButton');
+
+        let risks = [];
+
+        // --- Configuration ---
+        const LOCAL_STORAGE_KEY = 'risks';
+
+        // Define the order of columns for CSV export/import
+        const csvHeaders = [
+            "Risk Number", "Date Raised", "Raised By", "Risk Item", "Risk Issue", "Impact Statement",
+            "Impacted Area", "Risk Category", "Related Laws/Regulations", "Non-Compliance Impact",
+            "Probability (Initial)", "Impact (Initial)",
+            "Initial Risk Score", "Initial Risk Rating", "Outcome Definition", "Risk Owner",
+            "Controls/Mitigations", "Probability (Residual)", "Impact (Residual)",
+            "Residual Risk Score", "Residual Risk Rating", "Actions", "Risk Status",
+            "Review Date", "Age (Days)"
+        ];
+
+        // Map risk object keys to CSV headers
+        const riskKeyToCsvHeaderMap = {
+            riskNumber: "Risk Number", dateRaised: "Date Raised", raisedBy: "Raised By", riskItem: "Risk Item", 
+            riskIssue: "Risk Issue", impactStatement: "Impact Statement", impactedArea: "Impacted Area", 
+            riskCategory: "Risk Category", relatedLaws: "Related Laws/Regulations", nonComplianceImpact: "Non-Compliance Impact", 
+            probabilityInitial: "Probability (Initial)", impactInitial: "Impact (Initial)", riskScoreInitial: "Initial Risk Score", 
+            riskRatingInitial: "Initial Risk Rating", outcomeDefinition: "Outcome Definition", riskOwner: "Risk Owner", 
+            controlsMitigations: "Controls/Mitigations", probabilityResidual: "Probability (Residual)", impactResidual: "Impact (Residual)", 
+            riskScoreResidual: "Residual Risk Score", riskRatingResidual: "Residual Risk Rating", actions: "Actions", 
+            riskStatus: "Risk Status", reviewDate: "Review Date",
+        };
+
+        // Reverse map for CSV header to risk object key
+        const csvHeaderToRiskKeyMap = Object.fromEntries(
+            Object.entries(riskKeyToCsvHeaderMap).map(([key, value]) => [value, key])
+        );
+
+        // --- Helper Functions ---
+
+        function getRiskRatingClass(rating) {
+            switch (rating) {
+                case 'Low': return 'risk-rating-low';
+                case 'Medium': return 'risk-rating-medium';
+                case 'High': return 'risk-rating-high';
+                case 'Critical': return 'risk-rating-critical';
+                default: return '';
+            }
+        }
+
+        function calculateAge(dateRaised) {
+            if (!dateRaised) return '';
+            const today = new Date();
+            const raised = new Date(dateRaised);
+            const diffTime = Math.abs(today - raised);
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            return diffDays;
+        }
+
+        function getFormattedDate(date) {
+            const d = new Date(date);
+            const year = d.getFullYear();
+            const month = String(d.getMonth() + 1).padStart(2, '0');
+            const day = String(d.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+
+        function saveRisks() {
+            localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(risks));
+        }
+
+        function loadRisks() {
+            const storedRisks = localStorage.getItem(LOCAL_STORAGE_KEY);
+            if (storedRisks) {
+                risks = JSON.parse(storedRisks);
+                // Ensure new fields exist for display
+                risks.forEach(risk => {
+                    if (risk.relatedLaws === undefined) risk.relatedLaws = '';
+                    if (risk.nonComplianceImpact === undefined) risk.nonComplianceImpact = '';
+                });
+                renderRisks();
+            }
+        }
+
+        function renderRisks() {
+            riskTableBody.innerHTML = '';
+            risks.forEach((risk, index) => {
+                const row = riskTableBody.insertRow();
+
+                // Risk Number (First Sticky Column)
+                const riskNumberCell = row.insertCell();
+                riskNumberCell.textContent = risk.riskNumber;
+
+                row.insertCell().textContent = risk.dateRaised;
+                row.insertCell().textContent = risk.raisedBy;
+                row.insertCell().textContent = risk.riskItem;
+                row.insertCell().textContent = risk.riskIssue;
+                row.insertCell().textContent = risk.impactStatement;
+                row.insertCell().textContent = risk.impactedArea;
+                row.insertCell().textContent = risk.riskCategory;
+                row.insertCell().textContent = risk.relatedLaws;
+                row.insertCell().textContent = risk.nonComplianceImpact;
+                row.insertCell().textContent = risk.probabilityInitial;
+                row.insertCell().textContent = risk.impactInitial;
+                row.insertCell().textContent = risk.riskScoreInitial;
+                row.insertCell().innerHTML = `<span class="${getRiskRatingClass(risk.riskRatingInitial)}">${risk.riskRatingInitial}</span>`;
+                row.insertCell().textContent = risk.outcomeDefinition;
+                row.insertCell().textContent = risk.riskOwner;
+                row.insertCell().textContent = risk.controlsMitigations;
+                row.insertCell().textContent = risk.probabilityResidual;
+                row.insertCell().textContent = risk.impactResidual;
+                row.insertCell().textContent = risk.riskScoreResidual;
+                row.insertCell().innerHTML = `<span class="${getRiskRatingClass(risk.riskRatingResidual)}">${risk.riskRatingResidual}</span>`;
+                row.insertCell().textContent = risk.actions;
+                row.insertCell().textContent = risk.riskStatus;
+                row.insertCell().textContent = risk.reviewDate;
+                row.insertCell().textContent = calculateAge(risk.dateRaised);
+
+                // Actions (Last Sticky Column - buttons)
+                const actionCell = row.insertCell();
+                
+                const editButton = document.createElement('button');
+                editButton.textContent = 'Edit';
+                editButton.className = 'edit-btn';
+                // Pass the index via URL parameter for risk_form.html to handle
+                editButton.onclick = () => window.location.href = `risk_form.html?id=${index}`;
+                actionCell.appendChild(editButton);
+
+                // REMOVED: Delete Button
+            });
+        }
+
+        // REMOVED: deleteRisk function
+
+        // --- CSV Logic (Same as before) ---
+        function convertToCsv(dataArray) {
+            const headerRow = csvHeaders.map(h => `"${h.replace(/"/g, '""')}"`).join(',');
+            const rows = dataArray.map(risk => {
+                const values = csvHeaders.map(header => {
+                    const key = csvHeaderToRiskKeyMap[header];
+                    let value = risk[key];
+                    if (header === "Age (Days)") {
+                        value = calculateAge(risk.dateRaised);
+                    } else if (value === undefined || value === null) {
+                        value = '';
+                    } else if (typeof value === 'string') {
+                        value = value.replace(/"/g, '""');
+                    }
+                    return `"${value}"`;
+                });
+                return values.join(',');
+            });
+            return [headerRow, ...rows].join('\n');
+        }
+
+        function downloadCsv(csvContent, filename) {
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            if (link.download !== undefined) {
+                const url = URL.createObjectURL(blob);
+                link.setAttribute('href', url);
+                link.setAttribute('download', filename);
+                link.style.visibility = 'hidden';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                URL.revokeObjectURL(url);
+            } else {
+                alert('Your browser does not support downloading files directly. Please copy the text below into a file and save it as .csv:\n\n' + csvContent);
+            }
+        }
+
+        function parseCsv(csvText) {
+            const lines = csvText.split(/\r?\n/).filter(line => line.trim() !== '');
+            if (lines.length < 1) return [];
+
+            const parseLine = (line) => {
+                const results = [];
+                let inQuote = false;
+                let currentField = '';
+                for (let i = 0; i < line.length; i++) {
+                    const char = line[i];
+                    if (char === '"') {
+                        if (i < line.length - 1 && line[i+1] === '"') {
+                            currentField += '"';
+                            i++;
+                        } else {
+                            inQuote = !inQuote;
+                        }
+                    } else if (char === ',' && !inQuote) {
+                        results.push(currentField);
+                        currentField = '';
+                    } else {
+                        currentField += char;
+                    }
+                }
+                results.push(currentField);
+                return results;
+            };
+
+            const headerRow = lines[0];
+            const headers = parseLine(headerRow);
+
+            const parsedRisks = [];
+            for (let i = 1; i < lines.length; i++) {
+                const values = parseLine(lines[i]);
+                if (values.length !== headers.length) continue;
+
+                const risk = {};
+                for (let j = 0; j < headers.length; j++) {
+                    const key = csvHeaderToRiskKeyMap[headers[j]];
+                    if (key) {
+                        let val = values[j];
+                        if (['probabilityInitial', 'impactInitial', 'probabilityResidual', 'impactResidual'].includes(key)) {
+                            val = parseInt(val, 10);
+                            if (isNaN(val)) val = '';
+                        }
+                        risk[key] = val;
+                    }
+                }
+                const calculateRiskScore = (prob, impact) => (prob && impact) ? prob * impact : '';
+                const getRiskRating = (score) => {
+                    if (score <= 5) return 'Low';
+                    if (score <= 10) return 'Medium';
+                    if (score <= 15) return 'High';
+                    return 'Critical';
+                };
+                
+                risk.riskScoreInitial = calculateRiskScore(risk.probabilityInitial, risk.impactInitial);
+                risk.riskRatingInitial = getRiskRating(risk.riskScoreInitial);
+                risk.riskScoreResidual = calculateRiskScore(risk.probabilityResidual, risk.impactResidual);
+                risk.riskRatingResidual = getRiskRating(risk.riskScoreResidual);
+
+                parsedRisks.push(risk);
+            }
+            return parsedRisks;
+        }
+
+
+        // --- Event Listeners ---
+
+        addNewRiskButton.addEventListener('click', () => {
+            // Navigate to the form page without an ID parameter to signal 'add new' mode
+            window.location.href = 'risk_form.html';
+        });
+
+        saveCsvButton.addEventListener('click', () => {
+            if (risks.length === 0) {
+                alert('No data to save!');
+                return;
+            }
+            const csvContent = convertToCsv(risks);
+            const filename = `risk_register_${getFormattedDate(new Date())}.csv`;
+            downloadCsv(csvContent, filename);
+            alert('Risk register saved as CSV. Check your downloads folder!');
+        });
+
+        loadCsvButton.addEventListener('click', () => {
+            if (!csvFileInput.files.length) {
+                alert('Please select a CSV file first!');
+                return;
+            }
+
+            if (risks.length > 0 && !confirm('Loading a CSV will REPLACE all current data in the register. Are you sure?')) {
+                return;
+            }
+
+            const file = csvFileInput.files[0];
+            const reader = new FileReader();
+
+            reader.onload = (e) => {
+                try {
+                    const csvText = e.target.result;
+                    const loadedRisks = parseCsv(csvText);
+
+                    const validRisks = loadedRisks.filter(risk =>
+                        risk.riskNumber && risk.dateRaised && risk.raisedBy && risk.riskIssue
+                    );
+
+                    if (loadedRisks.length > validRisks.length) {
+                        alert(`Warning: ${loadedRisks.length - validRisks.length} rows were skipped due to missing or invalid data.`);
+                    }
+
+                    risks = validRisks;
+                    saveRisks();
+                    renderRisks();
+                    alert('Data loaded successfully from CSV!');
+                } catch (error) {
+                    alert('Error parsing CSV file. Please ensure it is correctly formatted. Details: ' + error.message);
+                    console.error('CSV Parsing Error:', error);
+                }
+            };
+
+            reader.onerror = () => {
+                alert('Error reading file.');
+            };
+
+            reader.readAsText(file);
+        });
+
+        // REMOVED: clearAllDataButton listener
+
+
+        // --- Initial Load ---
+        document.addEventListener('DOMContentLoaded', loadRisks);
+    </script>
+</body>
+</html>

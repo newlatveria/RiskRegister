@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Risk Entry Form</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        h1, h2 {
+            color: #0056b3;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        form {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 15px;
+            padding: 10px 0;
+        }
+        form div {
+            display: flex;
+            flex-direction: column;
+        }
+        label {
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+        input[type="text"],
+        input[type="date"],
+        input[type="number"],
+        textarea,
+        select {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        textarea {
+            resize: vertical;
+            min-height: 60px;
+        }
+        button {
+            padding: 10px 20px;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 10px;
+            transition: background-color 0.3s ease;
+        }
+        .form-actions {
+            grid-column: 1 / -1;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        #submitButton {
+            background-color: #28a745;
+        }
+        #submitButton:hover {
+            background-color: #1e7e34;
+        }
+        #cancelButton {
+            background-color: #6c757d;
+        }
+        #cancelButton:hover {
+            background-color: #5a6268;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 id="pageTitle">Add New Risk</h1>
+
+        <form id="riskForm">
+            <div>
+                <label for="riskNumber">Risk Number:</label>
+                <input type="text" id="riskNumber" readonly title="Automatically generated unique identifier for the risk.">
+            </div>
+            <div>
+                <label for="dateRaised">Date Raised:</label>
+                <input type="date" id="dateRaised" required title="The date this risk was identified and added to the register (defaults to today's date).">
+            </div>
+            <div>
+                <label for="raisedBy">Raised By:</label>
+                <input type="text" id="raisedBy" required title="Name or identifier of the person who raised this risk.">
+            </div>
+            <div>
+                <label for="riskItem">Risk Item:</label>
+                <input type="text" id="riskItem" title="A concise name or subject for the risk (e.g., 'Server Downtime', 'Budget Overrun').">
+            </div>
+            <div>
+                <label for="riskIssue">Risk Issue:</label>
+                <textarea id="riskIssue" required title="A detailed description of the risk event or situation. What could go wrong?"></textarea>
+            </div>
+            <div>
+                <label for="impactStatement">Impact Statement:</label>
+                <textarea id="impactStatement" title="Describe the potential consequences if this risk occurs. What is the impact?"></textarea>
+            </div>
+            <div>
+                <label for="impactedArea">Impacted Area:</label>
+                <input type="text" id="impactedArea" title="The business unit, system, or project area that would be affected.">
+            </div>
+            <div>
+                <label for="riskCategory">Risk Category:</label>
+                <select id="riskCategory" title="Broad category of the risk.">
+                    <option value="">-- Select a Category --</option>
+                    <option value="Operational">Operational</option>
+                    <option value="Technology/IT">Technology/IT</option>
+                    <option value="Legal & Compliance">Legal & Compliance</option>
+                    <option value="Financial">Financial</option>
+                    <option value="Strategic">Strategic</option>
+                    <option value="Reputational">Reputational</option>
+                    <option value="Other">Other</option>
+                </select>
+            </div>
+            <div>
+                <label for="relatedLaws">Related Laws/Regulations:</label>
+                <textarea id="relatedLaws" title="List the specific laws, regulations, or compliance standards related to this risk (e.g., GDPR, HIPAA, SOX)."></textarea>
+            </div>
+            <div>
+                <label for="nonComplianceImpact">Non-Compliance Impact:</label>
+                <textarea id="nonComplianceImpact" title="Describe the specific consequence of non-compliance (e.g., maximum fine, civil lawsuit, loss of operating license)."></textarea>
+            </div>
+            <div>
+                <label for="probabilityInitial">Probability (Initial - 1-5):</label>
+                <input type="number" id="probabilityInitial" min="1" max="5" required title="Initial likelihood of the risk occurring (1 = Very Low, 5 = Very High).">
+            </div>
+            <div>
+                <label for="impactInitial">Impact (Initial - 1-5):</label>
+                <input type="number" id="impactInitial" min="1" max="5" required title="Initial severity of the impact if the risk occurs (1 = Negligible, 5 = Catastrophic).">
+            </div>
+            <div>
+                <label for="riskScoreInitial">Initial Risk Score:</label>
+                <input type="text" id="riskScoreInitial" readonly title="Automatically calculated initial score (Probability * Impact).">
+            </div>
+            <div>
+                <label for="riskRatingInitial">Initial Risk Rating:</label>
+                <input type="text" id="riskRatingInitial" readonly title="Automatically derived initial rating (Low, Medium, High, Critical) based on the score.">
+            </div>
+            <div>
+                <label for="outcomeDefinition">Outcome Definition:</label>
+                <textarea id="outcomeDefinition" title="What defines the successful resolution or closure of this risk?"></textarea>
+            </div>
+            <div>
+                <label for="riskOwner">Risk Owner:</label>
+                <input type="text" id="riskOwner" title="The person or team responsible for managing and monitoring this risk.">
+            </div>
+            <div>
+                <label for="controlsMitigations">Controls/Mitigations:</label>
+                <textarea id="controlsMitigations" title="Actions or measures taken to reduce the probability or impact of the risk."></textarea>
+            </div>
+            <div>
+                <label for="probabilityResidual">Probability (Residual - 1-5):</label>
+                <input type="number" id="probabilityResidual" min="1" max="5" required title="Expected likelihood of the risk after controls/mitigations are applied (1 = Very Low, 5 = Very High).">
+            </div>
+            <div>
+                <label for="impactResidual">Impact (Residual - 1-5):</label>
+                <input type="number" id="impactResidual" min="1" max="5" required title="Expected severity of the impact after controls/mitigations are applied (1 = Negligible, 5 = Catastrophic).">
+            </div>
+            <div>
+                <label for="riskScoreResidual">Residual Risk Score:</label>
+                <input type="text" id="riskScoreResidual" readonly title="Automatically calculated residual score (Residual Probability * Residual Impact).">
+            </div>
+            <div>
+                <label for="riskRatingResidual">Residual Risk Rating:</label>
+                <input type="text" id="riskRatingResidual" readonly title="Automatically derived residual rating (Low, Medium, High, Critical) based on the residual score.">
+            </div>
+            <div>
+                <label for="actions">Actions:</label>
+                <textarea id="actions" title="Further actions required to manage or close out the risk."></textarea>
+            </div>
+            <div>
+                <label for="riskStatus">Risk Status:</label>
+                <select id="riskStatus" title="Current state of the risk (Open, In Progress, Closed, On Hold).">
+                    <option value="Open">Open</option>
+                    <option value="In Progress">In Progress</option>
+                    <option value="Closed">Closed</option>
+                    <option value="On Hold">On Hold</option>
+                </select>
+            </div>
+            <div>
+                <label for="reviewDate">Review Date:</label>
+                <input type="date" id="reviewDate" title="The next scheduled date to review this risk.">
+            </div>
+            <div class="form-actions">
+                <button type="button" id="cancelButton">Cancel / Back to Register</button>
+                <button type="submit" id="submitButton">Add Risk</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        const riskForm = document.getElementById('riskForm');
+        const submitButton = document.getElementById('submitButton');
+        const pageTitle = document.getElementById('pageTitle');
+        const cancelButton = document.getElementById('cancelButton');
+        
+        // --- Configuration ---
+        const LOCAL_STORAGE_KEY = 'risks';
+
+        let risks = [];
+        let editingIndex = -1; // -1 for Add mode, actual index for Edit mode
+
+        // --- Helper Functions ---
+
+        function calculateRiskScore(probability, impact) {
+            return probability * impact;
+        }
+
+        function getRiskRating(score) {
+            if (score <= 5) return 'Low';
+            if (score <= 10) return 'Medium';
+            if (score <= 15) return 'High';
+            return 'Critical';
+        }
+
+        function getNextRiskNumber() {
+            if (risks.length === 0) return 1;
+            const maxNumber = risks.reduce((max, risk) => {
+                const num = parseInt(risk.riskNumber, 10);
+                return isNaN(num) ? max : Math.max(max, num);
+            }, 0);
+            return maxNumber + 1;
+        }
+
+        function getFormattedDate(date) {
+            const d = new Date(date);
+            const year = d.getFullYear();
+            const month = String(d.getMonth() + 1).padStart(2, '0');
+            const day = String(d.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+
+        function loadRisks() {
+            const storedRisks = localStorage.getItem(LOCAL_STORAGE_KEY);
+            if (storedRisks) {
+                risks = JSON.parse(storedRisks);
+            }
+        }
+        
+        function saveRisks() {
+            localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(risks));
+        }
+
+        function populateForm(risk) {
+            document.getElementById('riskNumber').value = risk.riskNumber;
+            document.getElementById('dateRaised').value = risk.dateRaised;
+            document.getElementById('raisedBy').value = risk.raisedBy;
+            document.getElementById('riskItem').value = risk.riskItem;
+            document.getElementById('riskIssue').value = risk.riskIssue;
+            document.getElementById('impactStatement').value = risk.impactStatement;
+            document.getElementById('impactedArea').value = risk.impactedArea;
+            document.getElementById('riskCategory').value = risk.riskCategory;
+            document.getElementById('relatedLaws').value = risk.relatedLaws;
+            document.getElementById('nonComplianceImpact').value = risk.nonComplianceImpact;
+            document.getElementById('probabilityInitial').value = risk.probabilityInitial;
+            document.getElementById('impactInitial').value = risk.impactInitial;
+            document.getElementById('riskScoreInitial').value = risk.riskScoreInitial;
+            document.getElementById('riskRatingInitial').value = risk.riskRatingInitial;
+            document.getElementById('outcomeDefinition').value = risk.outcomeDefinition;
+            document.getElementById('riskOwner').value = risk.riskOwner;
+            document.getElementById('controlsMitigations').value = risk.controlsMitigations;
+            document.getElementById('probabilityResidual').value = risk.probabilityResidual;
+            document.getElementById('impactResidual').value = risk.impactResidual;
+            document.getElementById('riskScoreResidual').value = risk.riskScoreResidual;
+            document.getElementById('riskRatingResidual').value = risk.riskRatingResidual;
+            document.getElementById('actions').value = risk.actions;
+            document.getElementById('riskStatus').value = risk.riskStatus;
+            document.getElementById('reviewDate').value = risk.reviewDate;
+        }
+        
+        function setupForm() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const id = urlParams.get('id');
+
+            loadRisks();
+
+            if (id !== null) {
+                editingIndex = parseInt(id, 10);
+                if (editingIndex >= 0 && editingIndex < risks.length) {
+                    // EDIT MODE
+                    pageTitle.textContent = `Edit Risk #${risks[editingIndex].riskNumber}`;
+                    submitButton.textContent = 'Update Risk';
+                    submitButton.style.backgroundColor = '#007bff';
+                    populateForm(risks[editingIndex]);
+                } else {
+                    // Invalid ID, revert to Add mode
+                    editingIndex = -1;
+                    setupNewRiskMode();
+                }
+            } else {
+                // ADD MODE
+                setupNewRiskMode();
+            }
+        }
+
+        function setupNewRiskMode() {
+            document.getElementById('riskNumber').value = getNextRiskNumber();
+            document.getElementById('dateRaised').value = getFormattedDate(new Date());
+            document.getElementById('riskStatus').value = 'Open';
+            document.getElementById('riskScoreInitial').value = '';
+            document.getElementById('riskRatingInitial').value = '';
+            document.getElementById('riskScoreResidual').value = '';
+            document.getElementById('riskRatingResidual').value = '';
+        }
+
+        // --- Event Handlers ---
+        
+        riskForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            // Gather data from form
+            const probabilityInitial = parseInt(document.getElementById('probabilityInitial').value);
+            const impactInitial = parseInt(document.getElementById('impactInitial').value);
+            const probabilityResidual = parseInt(document.getElementById('probabilityResidual').value);
+            const impactResidual = parseInt(document.getElementById('impactResidual').value);
+            
+            const riskScoreInitial = calculateRiskScore(probabilityInitial, impactInitial);
+            const riskRatingInitial = getRiskRating(riskScoreInitial);
+            const riskScoreResidual = calculateRiskScore(probabilityResidual, impactResidual);
+            const riskRatingResidual = getRiskRating(riskScoreResidual);
+
+            const newRisk = {
+                riskNumber: document.getElementById('riskNumber').value,
+                dateRaised: document.getElementById('dateRaised').value,
+                raisedBy: document.getElementById('raisedBy').value,
+                riskItem: document.getElementById('riskItem').value,
+                riskIssue: document.getElementById('riskIssue').value,
+                impactStatement: document.getElementById('impactStatement').value,
+                impactedArea: document.getElementById('impactedArea').value,
+                riskCategory: document.getElementById('riskCategory').value,
+                relatedLaws: document.getElementById('relatedLaws').value,
+                nonComplianceImpact: document.getElementById('nonComplianceImpact').value,
+                probabilityInitial,
+                impactInitial,
+                riskScoreInitial,
+                riskRatingInitial,
+                outcomeDefinition: document.getElementById('outcomeDefinition').value,
+                riskOwner: document.getElementById('riskOwner').value,
+                controlsMitigations: document.getElementById('controlsMitigations').value,
+                probabilityResidual,
+                impactResidual,
+                riskScoreResidual,
+                riskRatingResidual,
+                actions: document.getElementById('actions').value,
+                riskStatus: document.getElementById('riskStatus').value,
+                reviewDate: document.getElementById('reviewDate').value,
+            };
+
+            if (editingIndex > -1) {
+                // Update existing risk
+                risks[editingIndex] = newRisk;
+                alert(`Risk #${newRisk.riskNumber} updated successfully!`);
+            } else {
+                // Add new risk
+                risks.push(newRisk);
+                alert(`Risk #${newRisk.riskNumber} added successfully!`);
+            }
+
+            saveRisks();
+            window.location.href = 'index.html'; // Go back to the main register view
+        });
+
+        // Auto-calculate initial risk score/rating
+        document.getElementById('probabilityInitial').addEventListener('input', () => {
+            const prob = parseInt(document.getElementById('probabilityInitial').value);
+            const impact = parseInt(document.getElementById('impactInitial').value);
+            if (!isNaN(prob) && !isNaN(impact)) {
+                const score = calculateRiskScore(prob, impact);
+                document.getElementById('riskScoreInitial').value = score;
+                document.getElementById('riskRatingInitial').value = getRiskRating(score);
+            } else {
+                document.getElementById('riskScoreInitial').value = '';
+                document.getElementById('riskRatingInitial').value = '';
+            }
+        });
+
+        document.getElementById('impactInitial').addEventListener('input', () => {
+            const prob = parseInt(document.getElementById('probabilityInitial').value);
+            const impact = parseInt(document.getElementById('impactInitial').value);
+            if (!isNaN(prob) && !isNaN(impact)) {
+                const score = calculateRiskScore(prob, impact);
+                document.getElementById('riskScoreInitial').value = score;
+                document.getElementById('riskRatingInitial').value = getRiskRating(score);
+            } else {
+                document.getElementById('riskScoreInitial').value = '';
+                document.getElementById('riskRatingInitial').value = '';
+            }
+        });
+
+        // Auto-calculate residual risk score/rating
+        document.getElementById('probabilityResidual').addEventListener('input', () => {
+            const prob = parseInt(document.getElementById('probabilityResidual').value);
+            const impact = parseInt(document.getElementById('impactResidual').value);
+            if (!isNaN(prob) && !isNaN(impact)) {
+                const score = calculateRiskScore(prob, impact);
+                document.getElementById('riskScoreResidual').value = score;
+                document.getElementById('riskRatingResidual').value = getRiskRating(score);
+            } else {
+                document.getElementById('riskScoreResidual').value = '';
+                document.getElementById('riskRatingResidual').value = '';
+            }
+        });
+
+        document.getElementById('impactResidual').addEventListener('input', () => {
+            const prob = parseInt(document.getElementById('probabilityResidual').value);
+            const impact = parseInt(document.getElementById('impactResidual').value);
+            if (!isNaN(prob) && !isNaN(impact)) {
+                const score = calculateRiskScore(prob, impact);
+                document.getElementById('riskScoreResidual').value = score;
+                document.getElementById('riskRatingResidual').value = getRiskRating(score);
+            } else {
+                document.getElementById('riskScoreResidual').value = '';
+                document.getElementById('riskRatingResidual').value = '';
+            }
+        });
+        
+        cancelButton.addEventListener('click', () => {
+            window.location.href = 'index.html';
+        });
+
+        // --- Initial Load ---
+        document.addEventListener('DOMContentLoaded', setupForm);
+
+    </script>
+</body>
+</html>
